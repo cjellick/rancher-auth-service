@@ -179,6 +179,10 @@ func (l *LClient) GenerateToken(jsonInput map[string]string) (model.Token, int, 
 		if len(result.Entries) < 1 {
 			return nilToken, 403, errors.Errorf("Cannot locate user information for %s", search.Filter)
 		} else if len(result.Entries) > 1 {
+			log.Info("DEBUGGING-AD (GenerateToken) Found more than one result")
+			for idx, e := range result.Entries {
+				log.Infof("DEBUGGING-AD (GenerateToken) Query Result %v: DN: %v Full entry: %v", idx, e.DN, e)
+			}
 			return nilToken, 403, errors.New("More than one result")
 		}
 
@@ -387,6 +391,10 @@ func (l *LClient) GetIdentity(distinguishedName string, scope string) (client.Id
 	if len(result.Entries) < 1 {
 		return nilIdentity, fmt.Errorf("No identities can be retrieved")
 	} else if len(result.Entries) > 1 {
+		log.Info("DEBUGGING-AD (GetIdentity) Found more than one result")
+		for idx, e := range result.Entries {
+			log.Infof("DEBUGGING-AD (GetIdentity) Query Result %v: DN: %v Full entry: %v", idx, e.DN, e)
+		}
 		return nilIdentity, fmt.Errorf("More than one result found")
 	}
 
@@ -804,6 +812,10 @@ func (l *LClient) userRecord(search *ldap.SearchRequest, lConn *ldap.Conn) (mode
 		log.Errorf("Cannot locate user information for %s", search.Filter)
 		return nilToken, status, nil
 	} else if len(result.Entries) > 1 {
+		log.Info("DEBUGGING-AD (userRecord) Found more than one result")
+		for idx, e := range result.Entries {
+			log.Infof("DEBUGGING-AD (userRecord) Query Result %v: DN: %v Full entry: %v", idx, e.DN, e)
+		}
 		log.Error("More than one result")
 		return nilToken, status, nil
 	}
